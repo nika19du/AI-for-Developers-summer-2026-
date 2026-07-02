@@ -1,1 +1,1 @@
-# AI-for-Developers-summer-2026-
+# AI-for-Developers-summer-2026
