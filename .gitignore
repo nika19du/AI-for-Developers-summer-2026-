@@ -1,0 +1,4 @@
+@"
+.vs/
+.ipynb_checkpoints/
+"@ | Set-Content .gitignore
