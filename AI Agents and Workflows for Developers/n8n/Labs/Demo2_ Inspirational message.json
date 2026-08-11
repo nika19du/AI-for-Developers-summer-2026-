@@ -1,0 +1,240 @@
+{
+  "name": "Demo2: Inspirational message",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -224
+      ],
+      "id": "a097859f-f30b-4210-9086-63cb209efcec",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -48
+      ],
+      "id": "0434cffb-95e7-44b8-a7eb-b7d2ada045ab",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Hello! I am ready to start my day! Today is {{ $today.toISO() }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant.\nYour main task is to inspire the user to start his day on a positive note.\nSearch for some positive news from the last three days, summarize them and include short inspirational thematic quote at the beginning."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -128,
+        -224
+      ],
+      "id": "8239b3db-22ab-4733-8075-9c7a1aa1f5d5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.6-luna",
+          "mode": "list",
+          "cachedResultName": "gpt-5.6-luna"
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -64,
+        16
+      ],
+      "id": "f5c98867-c57a-4fe8-95ff-fb04b1770deb",
+      "name": "GPT 5.6 Luna Web Search",
+      "credentials": {
+        "openAiApi": {
+          "id": "blJtH8283gY9ggam",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "qnkovanikol29@gmail.com, stu2301682038@uni-plovdiv.bg",
+        "subject": "Inspirational email",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -224
+      ],
+      "id": "f41eae46-27bc-4168-8a7d-25ae87952402",
+      "name": "Send a message",
+      "webhookId": "0131bffb-7cb4-4735-89c5-fee4bbbd6243",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6OMXnQo30WCAjo1w",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "destinationKey": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -224
+      ],
+      "id": "c79ec2f1-496c-42e5-bd5c-a3cfa0666c96",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "addLabels",
+        "threadId": "={{ $json.threadId }}",
+        "labelIds": [
+          "Label_7204778008750218560"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        -224
+      ],
+      "id": "5942adff-785d-49b5-bf4e-505ad47d7d1f",
+      "name": "Add label to thread",
+      "webhookId": "bbbb2763-a74b-4349-a4bd-6d11bfbddb02",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6OMXnQo30WCAjo1w",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -416
+      ],
+      "typeVersion": 1,
+      "id": "8ed6b9f0-d211-44c6-96fb-9c5465311cde",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 5.6 Luna Web Search": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Add label to thread",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d69b4b00-664a-4eab-9087-84563f484b03",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa25acd91153fc8022eadb32c317c6060cf992ef6552787623d23a7554d7dee8"
+  },
+  "nodeGroups": [],
+  "id": "RmJ83XWUaGIq5vEd",
+  "tags": []
+}
