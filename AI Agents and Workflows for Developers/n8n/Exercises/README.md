@@ -1,5 +1,8 @@
 # n8n AI Agent – Workflow Notes
 
+<img width="1640" height="781" alt="image" src="https://github.com/user-attachments/assets/07c1a7c2-d97a-4be7-a60f-798ddfb50cd8" />
+
+
 ## 1. Общ преглед
 
 Всяко съобщение, което изпращам към Telegram бота, се прихваща от **Telegram Trigger** в n8n.
@@ -637,15 +640,15 @@ SWITCH
 
 ### Ключови понятия
 
-**n8n** → orchestration на целия workflow
-**Telegram Trigger** → стартира workflow при нов Telegram update
-**Switch** → определя кой клон да бъде изпълнен
-**LLM** → голям езиков AI модел
-**AI Agent** → LLM + instructions + tools + memory + agent loop
-**Tools** → външни възможности на Agent-а
-**Memory** → контекст от разговора
-**Embeddings** → числово представяне на семантично съдържание
-**Pinecone** → vector database / knowledge base
-**RAG** → намиране на външна информация и предоставянето ѝ на модела
-**ngrok** → публичен HTTPS tunnel към локалния n8n
-**Webhook** → начин външна система да извести n8n за настъпило събитие
+**n8n** → orchestration на целия workflow <br/>
+**Telegram Trigger** → стартира workflow при нов Telegram update <br/>
+**Switch** → определя кой клон да бъде изпълнен <br/>
+**LLM** → голям езиков AI модел <br/>
+**AI Agent** → LLM + instructions + tools + memory + agent loop <br/>
+**Tools** → външни възможности на Agent-а <br/>
+**Memory** → контекст от разговора <br/>
+**Embeddings** → числово представяне на семантично съдържание <br/>
+**Pinecone** → vector database / knowledge base <br/>
+**RAG** → намиране на външна информация и предоставянето ѝ на модела <br/>
+**ngrok** → публичен HTTPS tunnel към локалния n8n <br/>
+**Webhook** → начин външна система да извести n8n за настъпило събитие <br/>
