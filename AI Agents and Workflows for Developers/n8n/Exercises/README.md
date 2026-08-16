@@ -129,53 +129,77 @@ Agent-ът разполага с набор от инструменти (**tools
 
 ## Web Search чрез Google SerpAPI
 
-AI Agent-ът разполага и с web search tool, реализиран чрез Google SerpAPI.
+AI Agent-ът разполага и с **web search tool**, реализиран чрез **Google SerpAPI**.
 
-LLM няма задължително достъп до актуална информация от интернет. Когато заявката изисква такава информация, Agent-ът може да реши да използва web search инструмента.
+LLM няма задължително достъп до актуална информация от интернет. Когато заявката изисква такава информация, Agent-ът може да реши да използва **web search инструмента**.
 
 Например при:
 
-„Какви са последните новини за OpenAI?“
+> „Какви са последните новини за OpenAI?“
 
-процесът може да бъде:
+Процесът може да бъде:
 
-User <br/>
- ↓ <br/>
-AI Agent / LLM <br/>
- ↓<br/>
-"Необходима ми е актуална информация"<br/>
- ↓<br/>
-Google Search Tool<br/>
- ↓<br/>
-SerpAPI<br/>
- ↓<br/>
-Google search results<br/>
- ↓<br/>
-AI Agent / LLM<br/>
- ↓<br/>
-Анализ на резултатите<br/>
- ↓<br/>
-Final Answer<br/>
-<br/>
-SerpAPI играе ролята на API посредник между нашето приложение и Google Search:
-<br/>
-n8n AI Agent<br/>
-     ↓<br/>
-Google Search Tool<br/>
-     ↓<br/>
-SerpAPI<br/>
-     ↓<br/>
-Google Search<br/>
-<br/>
-Това е различно от Pinecone:
-<br/>
-Tool: За какво служи
-Pinecone: Търсене в моята собствена knowledge base
-Google + SerpAPI: Търсене на външна/актуална информация в интернет
-Gmail: Четене и изпращане на имейли
-Google Calendar: Четене и създаване на събития
-Simple Memory: Контекст на разговора
-<br/>
+```text
+User
+ ↓
+AI Agent / LLM
+ ↓
+"Необходима ми е актуална информация"
+ ↓
+Google Search Tool
+ ↓
+SerpAPI
+ ↓
+Google Search Results
+ ↓
+AI Agent / LLM
+ ↓
+Анализ на резултатите
+ ↓
+Final Answer
+```
+
+**SerpAPI** играе ролята на API посредник между нашето приложение и Google Search:
+
+```text
+n8n AI Agent
+     ↓
+Google Search Tool
+     ↓
+SerpAPI
+     ↓
+Google Search
+```
+
+### Разлика между инструментите
+
+| Tool                 | За какво служи                                     |
+| -------------------- | -------------------------------------------------- |
+| **Pinecone**         | Търсене в моята собствена knowledge base           |
+| **Google + SerpAPI** | Търсене на външна и актуална информация в интернет |
+| **Gmail**            | Четене и изпращане на имейли                       |
+| **Google Calendar**  | Четене и създаване на събития                      |
+| **Simple Memory**    | Запазване на контекста на разговора                |
+
+### Pinecone vs. Web Search
+
+Най-важната разлика е откъде идва информацията:
+
+```text
+             AI Agent
+            /        \
+           ↓          ↓
+      Pinecone     SerpAPI
+           ↓          ↓
+     My Knowledge   Internet
+         Base        Search
+```
+
+* **Pinecone** → използваме, когато Agent-ът трябва да намери информация в нашата собствена knowledge base.
+* **Google + SerpAPI** → използваме, когато Agent-ът има нужда от външна или актуална информация от интернет.
+
+Agent-ът може сам да прецени **кой инструмент е подходящ за конкретната заявка**.
+
 # 5. Какво е LLM?
 
 **LLM = Large Language Model (голям езиков модел).**
