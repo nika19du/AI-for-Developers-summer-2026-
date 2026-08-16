@@ -127,6 +127,55 @@ Agent-ът разполага с набор от инструменти (**tools
 
 ---
 
+## Web Search чрез Google SerpAPI
+
+AI Agent-ът разполага и с web search tool, реализиран чрез Google SerpAPI.
+
+LLM няма задължително достъп до актуална информация от интернет. Когато заявката изисква такава информация, Agent-ът може да реши да използва web search инструмента.
+
+Например при:
+
+„Какви са последните новини за OpenAI?“
+
+процесът може да бъде:
+
+User
+ ↓
+AI Agent / LLM
+ ↓
+"Необходима ми е актуална информация"
+ ↓
+Google Search Tool
+ ↓
+SerpAPI
+ ↓
+Google search results
+ ↓
+AI Agent / LLM
+ ↓
+Анализ на резултатите
+ ↓
+Final Answer
+
+SerpAPI играе ролята на API посредник между нашето приложение и Google Search:
+
+n8n AI Agent
+     ↓
+Google Search Tool
+     ↓
+SerpAPI
+     ↓
+Google Search
+
+Това е различно от Pinecone:
+
+Tool	За какво служи
+Pinecone	Търсене в моята собствена knowledge base
+Google + SerpAPI	Търсене на външна/актуална информация в интернет
+Gmail	Четене и изпращане на имейли
+Google Calendar	Четене и създаване на събития
+Simple Memory	Контекст на разговора
+
 # 5. Какво е LLM?
 
 **LLM = Large Language Model (голям езиков модел).**
