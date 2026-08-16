@@ -1,0 +1,350 @@
+{
+  "name": "Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "personal-assistant",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        240
+      ],
+      "id": "3af54551-f4af-45ec-be60-17a4e71662fa",
+      "name": "Webhook",
+      "webhookId": "705789ce-6e1d-47d9-a2a9-14138b1e84d9"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Expected a non-empty \"input\" and non-empty \"sessionId\" paramaters"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        976,
+        -32
+      ],
+      "id": "00ef48ff-d23c-4f32-bc54-ae10cc735f40",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e4f5599d-aaf4-48a4-9b17-7110cb6ec070",
+              "leftValue": "={{ $json.body.input }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2d7a0979-f6af-4c40-addc-13e569fd8d9e",
+              "leftValue": "={{ $json.body.sessionId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        608,
+        240
+      ],
+      "id": "adc9dc28-25d7-417e-bb55-c09e4a4fb671",
+      "name": "If input is invalid"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').first().json.body.input }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        272
+      ],
+      "id": "1da1436e-ef34-48a4-91a9-657c30181a6f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').first().json.body.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        496
+      ],
+      "id": "d1e5c5b6-ba92-4a60-a7ea-08e03436f4ca",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.6-luna",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        672,
+        496
+      ],
+      "id": "d964e4b3-7c42-4f9b-bfb0-4669cd2234ee",
+      "name": "GPT 5.6 Luna",
+      "credentials": {
+        "openRouterApi": {
+          "id": "Gs8yHiiLlVScIDUc",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to retrieve information about the current weather in a given city.",
+        "cityName": "={{ $fromAI('City', 'The name of the city.', 'string') }},{{ $fromAI('country_code', 'The 2-letter ISO code of the country separated by a comma.', 'string') }}"
+      },
+      "type": "n8n-nodes-base.openWeatherMapTool",
+      "typeVersion": 1,
+      "position": [
+        928,
+        496
+      ],
+      "id": "11b124fd-486f-4f13-b0b7-4f9a8194572a",
+      "name": "get_weather",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "lNY3Hwg2xrUNJqzK",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/news",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        1056,
+        496
+      ],
+      "id": "906c8a81-de02-4ba0-b5d8-0deda33a67af",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "content": "Add a tool that calls a sub-workflow with userId and message.\n\nThe sub-workflow fetches information about the user - retrieving his/her email; and just then. sends the message.",
+        "height": 208,
+        "width": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1120,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "ad739af8-1025-4e68-854b-c843b69cb587",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to send an email.",
+        "sendTo": "qnkovanikol29@gmail.com",
+        "subject": "={{ $fromAI('subject', 'The subject of the mail.', 'string') }}",
+        "message": "={{ $fromAI('message', 'The body of the mail in HTML format.', 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        496
+      ],
+      "id": "3e3603e5-b260-4ed8-bf64-9166682a9483",
+      "name": "send_email",
+      "webhookId": "f507d715-fc96-4d13-967e-d5e7ead1aee5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6OMXnQo30WCAjo1w",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Call this tool to create a new event in Google Calendar.",
+        "calendar": {
+          "__rl": true,
+          "value": "qnkovanikol29@gmail.com",
+          "mode": "list",
+          "cachedResultName": "qnkovanikol29@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1312,
+        496
+      ],
+      "id": "ac3d49f6-1d5f-4989-a464-fdfe7c5d618c",
+      "name": "create_event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "uqQk779hMLGeu47D",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If input is invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If input is invalid": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 5.6 Luna": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "84fa5266-6656-4171-b9c7-4e81ab1de0a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa25acd91153fc8022eadb32c317c6060cf992ef6552787623d23a7554d7dee8"
+  },
+  "nodeGroups": [],
+  "id": "rd8mO12b7nACBXPk",
+  "tags": []
+}
