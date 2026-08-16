@@ -1,5 +1,8 @@
 # n8n AI Agent – Workflow Notes
 
+<img width="1640" height="781" alt="image" src="https://github.com/user-attachments/assets/07c1a7c2-d97a-4be7-a60f-798ddfb50cd8" />
+
+
 ## 1. Общ преглед
 
 Всяко съобщение, което изпращам към Telegram бота, се прихваща от **Telegram Trigger** в n8n.
@@ -123,6 +126,79 @@ Agent-ът разполага с набор от инструменти (**tools
 * да потърси информация в Pinecone knowledge base.
 
 ---
+
+## Web Search чрез Google SerpAPI
+
+AI Agent-ът разполага и с **web search tool**, реализиран чрез **Google SerpAPI**.
+
+LLM няма задължително достъп до актуална информация от интернет. Когато заявката изисква такава информация, Agent-ът може да реши да използва **web search инструмента**.
+
+Например при:
+
+> „Какви са последните новини за OpenAI?“
+
+Процесът може да бъде:
+
+```text
+User
+ ↓
+AI Agent / LLM
+ ↓
+"Необходима ми е актуална информация"
+ ↓
+Google Search Tool
+ ↓
+SerpAPI
+ ↓
+Google Search Results
+ ↓
+AI Agent / LLM
+ ↓
+Анализ на резултатите
+ ↓
+Final Answer
+```
+
+**SerpAPI** играе ролята на API посредник между нашето приложение и Google Search:
+
+```text
+n8n AI Agent
+     ↓
+Google Search Tool
+     ↓
+SerpAPI
+     ↓
+Google Search
+```
+
+### Разлика между инструментите
+
+| Tool                 | За какво служи                                     |
+| -------------------- | -------------------------------------------------- |
+| **Pinecone**         | Търсене в моята собствена knowledge base           |
+| **Google + SerpAPI** | Търсене на външна и актуална информация в интернет |
+| **Gmail**            | Четене и изпращане на имейли                       |
+| **Google Calendar**  | Четене и създаване на събития                      |
+| **Simple Memory**    | Запазване на контекста на разговора                |
+
+### Pinecone vs. Web Search
+
+Най-важната разлика е откъде идва информацията:
+
+```text
+             AI Agent
+            /        \
+           ↓          ↓
+      Pinecone     SerpAPI
+           ↓          ↓
+     My Knowledge   Internet
+         Base        Search
+```
+
+* **Pinecone** → използваме, когато Agent-ът трябва да намери информация в нашата собствена knowledge base.
+* **Google + SerpAPI** → използваме, когато Agent-ът има нужда от външна или актуална информация от интернет.
+
+Agent-ът може сам да прецени **кой инструмент е подходящ за конкретната заявка**.
 
 # 5. Какво е LLM?
 
@@ -637,15 +713,15 @@ SWITCH
 
 ### Ключови понятия
 
-**n8n** → orchestration на целия workflow
-**Telegram Trigger** → стартира workflow при нов Telegram update
-**Switch** → определя кой клон да бъде изпълнен
-**LLM** → голям езиков AI модел
-**AI Agent** → LLM + instructions + tools + memory + agent loop
-**Tools** → външни възможности на Agent-а
-**Memory** → контекст от разговора
-**Embeddings** → числово представяне на семантично съдържание
-**Pinecone** → vector database / knowledge base
-**RAG** → намиране на външна информация и предоставянето ѝ на модела
-**ngrok** → публичен HTTPS tunnel към локалния n8n
-**Webhook** → начин външна система да извести n8n за настъпило събитие
+**n8n** → orchestration на целия workflow <br/>
+**Telegram Trigger** → стартира workflow при нов Telegram update <br/>
+**Switch** → определя кой клон да бъде изпълнен <br/>
+**LLM** → голям езиков AI модел <br/>
+**AI Agent** → LLM + instructions + tools + memory + agent loop <br/>
+**Tools** → външни възможности на Agent-а <br/>
+**Memory** → контекст от разговора <br/>
+**Embeddings** → числово представяне на семантично съдържание <br/>
+**Pinecone** → vector database / knowledge base <br/>
+**RAG** → намиране на външна информация и предоставянето ѝ на модела <br/>
+**ngrok** → публичен HTTPS tunnel към локалния n8n <br/>
+**Webhook** → начин външна система да извести n8n за настъпило събитие <br/>
