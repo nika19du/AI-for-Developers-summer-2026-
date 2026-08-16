@@ -139,43 +139,43 @@ LLM няма задължително достъп до актуална инф�
 
 процесът може да бъде:
 
-User
- ↓
-AI Agent / LLM
- ↓
-"Необходима ми е актуална информация"
- ↓
-Google Search Tool
- ↓
-SerpAPI
- ↓
-Google search results
- ↓
-AI Agent / LLM
- ↓
-Анализ на резултатите
- ↓
-Final Answer
-
+User <br/>
+ ↓ <br/>
+AI Agent / LLM <br/>
+ ↓<br/>
+"Необходима ми е актуална информация"<br/>
+ ↓<br/>
+Google Search Tool<br/>
+ ↓<br/>
+SerpAPI<br/>
+ ↓<br/>
+Google search results<br/>
+ ↓<br/>
+AI Agent / LLM<br/>
+ ↓<br/>
+Анализ на резултатите<br/>
+ ↓<br/>
+Final Answer<br/>
+<br/>
 SerpAPI играе ролята на API посредник между нашето приложение и Google Search:
-
-n8n AI Agent
-     ↓
-Google Search Tool
-     ↓
-SerpAPI
-     ↓
-Google Search
-
+<br/>
+n8n AI Agent<br/>
+     ↓<br/>
+Google Search Tool<br/>
+     ↓<br/>
+SerpAPI<br/>
+     ↓<br/>
+Google Search<br/>
+<br/>
 Това е различно от Pinecone:
-
-Tool	За какво служи
-Pinecone	Търсене в моята собствена knowledge base
-Google + SerpAPI	Търсене на външна/актуална информация в интернет
-Gmail	Четене и изпращане на имейли
-Google Calendar	Четене и създаване на събития
-Simple Memory	Контекст на разговора
-
+<br/>
+Tool: За какво служи
+Pinecone: Търсене в моята собствена knowledge base
+Google + SerpAPI: Търсене на външна/актуална информация в интернет
+Gmail: Четене и изпращане на имейли
+Google Calendar: Четене и създаване на събития
+Simple Memory: Контекст на разговора
+<br/>
 # 5. Какво е LLM?
 
 **LLM = Large Language Model (голям езиков модел).**
