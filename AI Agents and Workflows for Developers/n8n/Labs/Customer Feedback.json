@@ -1,0 +1,467 @@
+{
+  "name": "Customer Feedback",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Customer Feedback",
+        "formDescription": "We'd love to hear from you! What did we do well, and how can we improve your experience?",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Enter your name...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Enter email...",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Feedback",
+              "fieldType": "textarea",
+              "placeholder": "Tell us about your experience...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "bb8f906f-8e6d-4104-b48d-9b34a9a0a5f1",
+      "name": "On form submission",
+      "webhookId": "b89138ae-7b17-474a-a8de-2822a344ed31"
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.Feedback }}",
+        "options": {
+          "categories": "Positive, Negative"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "7bc1dc7f-7b9a-43f2-8ba1-e6b838dc78bd",
+      "name": "Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.4-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5.4-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1000,
+        -72
+      ],
+      "id": "40f75258-7d8f-46e3-86f7-b5bb11d85b1d",
+      "name": "GPT 5.4-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "blJtH8283gY9ggam",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Positive",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Feedback": "={{ $('On form submission').item.json.Feedback }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        -192
+      ],
+      "id": "968917dd-036e-4329-9e71-53c4a5ef02d5",
+      "name": "Add Positive Review",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "i2ITXzQCbPG5jw3W",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support agent for a restaurant called the Oak & Barrel.\nWrite a friendly and concise response to the following customer feedback.\nThis needs to be formatted as an HTML email, and signed by Luna from Oak & Barrel.\n\nRespond with the HTML only. Do not include ```html\n\nCustomer Name: {{ $('On form submission').item.json.Name }}\n\nFeedback:\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        928,
+        -304
+      ],
+      "id": "8e62ae67-8408-4771-84da-7752c8138c3a",
+      "name": "Generate Positive Response"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Thank you for your feedback",
+        "message": "={{ $json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        -192
+      ],
+      "id": "a0aea178-a911-43c2-8133-be888b4d02b8",
+      "name": "Send Positive Email",
+      "webhookId": "7b2e61ef-30b5-45b4-8ff4-3924c08c844f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6OMXnQo30WCAjo1w",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support agent for a restaurant called the Oak & Barrel. A customer just left the below review.\nProvide a concise suggestion on what the owners of the restaurant can do to avoid negative reviews like this in the future.\n\nFeedback:\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        576,
+        96
+      ],
+      "id": "57a80789-c3d9-40f8-b9b3-188e094ff9bb",
+      "name": "Propose Improvements"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1377903494,
+          "mode": "list",
+          "cachedResultName": "Negative",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G1I5C5ws19-Fo0aISQSrIcBr-OjkaO9ETKniV5rZ0YI/edit#gid=1377903494"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Feedback": "={{ $('On form submission').item.json.Feedback }}",
+            "AI Suggestion": "={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Suggestion",
+              "displayName": "AI Suggestion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        992,
+        96
+      ],
+      "id": "32ed08d0-5ac5-4e82-bba5-d1a4f0b53b0a",
+      "name": "Add Negative Review",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "i2ITXzQCbPG5jw3W",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a customer support agent for a restaurant called the Oak & Barrel. Write a friendly and concise response to the following customer feedback. The email should thank the user for pointing out the issues with the restaturant, and reassure them that this has been escalated to management.\nInclude a 15% coupon code in the email when they use the code NIKA next time they vivisit the restaurant.\n\nThis needs to be formatted as an HTML email, and signed by Luna from Oak & Barrel.\n\nRespond with the HTML only. Do not include ```html\n\nCustomer Name: {{ $('On form submission').item.json.Name }}\n\nFeedback:\n{{ $('On form submission').item.json.Feedback }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1280,
+        96
+      ],
+      "id": "a4b0a03d-4073-4b00-852a-ea4c9d6c792d",
+      "name": "Generate Negative Response"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Thank you for your feedback!",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1632,
+        96
+      ],
+      "id": "41fdd2fe-6760-470b-99df-b6889120c3aa",
+      "name": "Send Negative Email Response",
+      "webhookId": "b789e1f2-01ee-4930-a59f-04aae6db6ea1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6OMXnQo30WCAjo1w",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT 5.4-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Positive Response",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Propose Improvements",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Negative Response",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Add Positive Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Propose Improvements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Positive Review": {
+      "main": [
+        [
+          {
+            "node": "Generate Positive Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Positive Response": {
+      "main": [
+        [
+          {
+            "node": "Send Positive Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Propose Improvements": {
+      "main": [
+        [
+          {
+            "node": "Add Negative Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Negative Review": {
+      "main": [
+        [
+          {
+            "node": "Generate Negative Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Negative Response": {
+      "main": [
+        [
+          {
+            "node": "Send Negative Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "19052387-e402-4709-8551-022ab5ac2883",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aa25acd91153fc8022eadb32c317c6060cf992ef6552787623d23a7554d7dee8"
+  },
+  "nodeGroups": [],
+  "id": "TGXPD3TmLXQsDKmH",
+  "tags": []
+}
